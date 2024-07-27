@@ -1,4 +1,4 @@
-import autoAnimate from 'https://cdn.jsdelivr.net/npm/@formkit/auto-animate@0.8.2/index.min.js';
+//import autoAnimate from 'https://cdn.jsdelivr.net/npm/@formkit/auto-animate@0.8.2/index.min.js';
 
 let list = document.querySelector('ul.list');
 let btnAdd = document.getElementById('btnAdd');
@@ -54,7 +54,7 @@ function addTaskToHTML() {
             </svg>
         </div>
         `;
-        autoAnimate(newTask);
+        //autoAnimate(newTask);
         list.appendChild(newTask);
     })
     saveLocalStorage();
