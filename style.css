@@ -96,6 +96,10 @@ body {
     cursor: pointer;
 }
 
+form input {
+    border: none;
+}
+
 .list li.complete {
     opacity: .5;
 }
