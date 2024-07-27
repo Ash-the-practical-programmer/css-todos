@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap');
+
+* {
+    font-family: 'Tilt Neon', Poppins;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(
+        45deg, #dbb6e7, #d3e6f3
+    );
+}
+
+.container {
+    width: 400px;
+    background-color: #fff5;
+    max-width: 100vw;
+    margin: 30px auto;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 20px;
+}
+
+.form {
+    background-color: #fff9ff;
+    border-radius: inherit;
+    padding: inherit;
+}
+
+.form h3 {
+    margin: 0;
+    text-align: left;
+}
+
+.form form {
+    display: grid;
+    grid-template-columns: 1fr 60px;
+    gap: 40px;
+}
+
+.form form textarea {
+    border: none;
+    outline: none;
+    resize: none;
+    border-radius: 4px;
+}
+
+.form form button {
+    background-color: #0d0112;
+    color: #eee;
+    border-radius: 10px;
+    border: none;
+    font-size: small;
+    cursor: pointer;
+    transition: box-shadow 0.5 ease;
+}
+
+.form form button:hover {
+    box-shadow: 0px 2px 6px rgba(24, 21, 21, 0.629);
+}
+
+.list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.list li .complete-icon svg {
+    width: 20px;
+}
+
+.list li .close-icon svg {
+    width: 12px;
+}
+
+.list li {
+    background-color: #fff9ff;
+    margin-top: 10px;
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
+    gap: 30px;
+    text-align: left;
+    padding: 10px;
+    transition: color 0.5s ease;
+    transition: opacity 0.5s ease;
+}
+
+.list li .complete-icon,
+.list li .close-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.list li.complete {
+    opacity: .5;
+}
+
+.list li.complete .complete-icon svg {
+    color: green;
+}
