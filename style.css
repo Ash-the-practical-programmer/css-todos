@@ -40,7 +40,7 @@ body {
     gap: 40px;
 }
 
-.form form textarea {
+.form form input {
     border: none;
     outline: none;
     resize: none;
@@ -94,10 +94,6 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-}
-
-form input {
-    border: none;
 }
 
 .list li.complete {
