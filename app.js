@@ -1,5 +1,3 @@
-//import autoAnimate from 'https://cdn.jsdelivr.net/npm/@formkit/auto-animate@0.8.2/index.min.js';
-
 let list = document.querySelector('ul.list');
 let btnAdd = document.getElementById('btnAdd');
 let listTask = [
@@ -16,9 +14,6 @@ let listTask = [
 if(localStorage.getItem('listTask') != null) {
     listTask = JSON.parse(localStorage.getItem('listTask'));
 }
-
-//autoAnimate(list);
-//autoAnimate(list);
 
 function saveLocalStorage() {
     localStorage.setItem('listTask', JSON.stringify(listTask));
@@ -45,13 +40,13 @@ function addTaskToHTML() {
         newTask.classList.add(task.status);
         newTask.classList.add('new');
         newTask.innerHTML = `
-        <div class="complete-icon" onclick="completeTask(${index})">
+        <div class="complete-icon" data-index="${index}">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
             </svg>  
         </div>
         <div class="content">${task.content}</div>
-        <div class="close-icon" onclick="deleteTask(${index})">
+        <div class="close-icon" data-index="${index}">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18 17.94 6M18 18 6.06 6"/>
             </svg>
@@ -60,9 +55,9 @@ function addTaskToHTML() {
         list.appendChild(newTask);
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                newTask.classList.remove('new');
+            newTask.classList.remove('new');
             });
-        });
+        })
     })
 }
 
@@ -74,14 +69,25 @@ function completeTask(index) {
 
 function deleteTask(index) {
     let taskElement = document.querySelectorAll('.list li')[index];
-    listTask = listTask.filter((task, i) => i != index);
+    listTask.splice(index, 1); // Correct way to remove an item by index
     if(taskElement) {
         taskElement.classList.add('remove');
         setTimeout(() => {
             taskElement.remove();
-        }, 300);
+            addTaskToHTML(); // Re-render the list
+            saveLocalStorage();
+        }, 200);
     }
-    saveLocalStorage();
 }
+
+list.addEventListener('click', (e) => {
+    if (e.target.closest('.complete-icon')) {
+        let index = e.target.closest('.complete-icon').dataset.index;
+        completeTask(index);
+    } else if (e.target.closest('.close-icon')) {
+        let index = e.target.closest('.close-icon').dataset.index;
+        deleteTask(index);
+    }
+});
 
 addTaskToHTML();
