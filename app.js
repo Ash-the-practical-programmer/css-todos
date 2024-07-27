@@ -18,6 +18,7 @@ if(localStorage.getItem('listTask') != null) {
 }
 
 //autoAnimate(list);
+//autoAnimate(list);
 
 function saveLocalStorage() {
     localStorage.setItem('listTask', JSON.stringify(listTask));
@@ -42,6 +43,7 @@ function addTaskToHTML() {
     listTask.forEach((task, index) => {
         let newTask = document.createElement('li');
         newTask.classList.add(task.status);
+        newTask.classList.add('new');
         newTask.innerHTML = `
         <div class="complete-icon" onclick="completeTask(${index})">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -55,8 +57,12 @@ function addTaskToHTML() {
             </svg>
         </div>
         `;
-        //autoAnimate(newTask);
         list.appendChild(newTask);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                newTask.classList.remove('new');
+            });
+        });
     })
 }
 
@@ -67,8 +73,14 @@ function completeTask(index) {
 }
 
 function deleteTask(index) {
+    let taskElement = document.querySelectorAll('.list li')[index];
     listTask = listTask.filter((task, i) => i != index);
-    addTaskToHTML();
+    if(taskElement) {
+        taskElement.classList.add('remove');
+        setTimeout(() => {
+            taskElement.remove();
+        }, 300);
+    }
     saveLocalStorage();
 }
 
