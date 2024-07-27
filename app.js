@@ -1,4 +1,4 @@
-import autoAnimate from 'https://cdn.jsdelivr.net/npm/@formkit/auto-animate@0.8.2/index.min.js';
+//import autoAnimate from 'https://cdn.jsdelivr.net/npm/@formkit/auto-animate@0.8.2/index.min.js';
 
 let list = document.querySelector('ul.list');
 let btnAdd = document.getElementById('btnAdd');
@@ -17,7 +17,7 @@ if(localStorage.getItem('listTask') != null) {
     listTask = JSON.parse(localStorage.getItem('listTask'));
 }
 
-autoAnimate(list);
+//autoAnimate(list);
 
 function saveLocalStorage() {
     localStorage.setItem('listTask', JSON.stringify(listTask));
@@ -34,6 +34,7 @@ btnAdd.onclick = (e) => {
     }
     addTaskToHTML();
     document.getElementById('task').value = '';
+    saveLocalStorage();
 }
 
 function addTaskToHTML() {
@@ -54,19 +55,21 @@ function addTaskToHTML() {
             </svg>
         </div>
         `;
+        //autoAnimate(newTask);
         list.appendChild(newTask);
     })
-    saveLocalStorage();
 }
 
 function completeTask(index) {
     listTask[index].status = (listTask[index].status === 'doing' ? 'complete' : 'doing');
     addTaskToHTML();
+    saveLocalStorage();
 }
 
 function deleteTask(index) {
     listTask = listTask.filter((task, i) => i != index);
     addTaskToHTML();
+    saveLocalStorage();
 }
 
 addTaskToHTML();
