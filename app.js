@@ -17,7 +17,7 @@ if(localStorage.getItem('listTask') != null) {
     listTask = JSON.parse(localStorage.getItem('listTask'));
 }
 
-autoAnimate(list);
+//autoAnimate(list);
 
 function saveLocalStorage() {
     localStorage.setItem('listTask', JSON.stringify(listTask));
@@ -54,6 +54,7 @@ function addTaskToHTML() {
             </svg>
         </div>
         `;
+        autoAnimate(newTask);
         list.appendChild(newTask);
     })
     saveLocalStorage();
