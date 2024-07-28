@@ -37,6 +37,7 @@ btnAdd.onclick = (e) => {
 function addTaskToHTML(task = null, index = null) {
     if (task !== null && index !== null) {
         let newTask = document.createElement('li');
+        newTask.setAttribute('draggable', 'true');
         newTask.classList.add(task.status);
         newTask.classList.add('new');
         newTask.innerHTML = `
@@ -51,7 +52,15 @@ function addTaskToHTML(task = null, index = null) {
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18 17.94 6M18 18 6.06 6"/>
             </svg>
         </div>
-        `;
+        `
+        ;/*
+        newTask.addEventListener('dragstart', (e) => {
+            e.target.classList.add('dragging');
+        });
+        newTask.addEventListener('dragend', (e) => {
+            e.target.classList.remove('dragging');
+        });*/
+            
         list.appendChild(newTask);
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
