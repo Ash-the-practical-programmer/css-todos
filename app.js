@@ -23,19 +23,19 @@ btnAdd.onclick = (e) => {
     e.preventDefault();
     let content = document.getElementById('task');
     if(content.value.trim() != '') {
-        listTask.unshift({
+        let newTask = {
             content: content.value,
             status: 'doing'
-        })
+        };
+        listTask.push(newTask);
+        addTaskToHTML(newTask, listTask.length - 1);
     }
-    addTaskToHTML();
     document.getElementById('task').value = '';
     saveLocalStorage();
 }
 
-function addTaskToHTML() {
-    list.innerHTML = '';
-    listTask.forEach((task, index) => {
+function addTaskToHTML(task = null, index = null) {
+    if (task !== null && index !== null) {
         let newTask = document.createElement('li');
         newTask.classList.add(task.status);
         newTask.classList.add('new');
@@ -55,16 +55,25 @@ function addTaskToHTML() {
         list.appendChild(newTask);
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-            newTask.classList.remove('new');
+                newTask.classList.remove('new');
             });
-        })
-    })
+        });
+    } else {
+        list.innerHTML = '';
+        listTask.forEach((task, index) => {
+            addTaskToHTML(task, index);
+        });
+    }
 }
 
 function completeTask(index) {
     listTask[index].status = (listTask[index].status === 'doing' ? 'complete' : 'doing');
-    addTaskToHTML();
     saveLocalStorage();
+    // Update only the specific task element
+    let taskElement = document.querySelectorAll('.list li')[index];
+    if (taskElement) {
+        taskElement.classList.toggle('complete', listTask[index].status === 'complete');
+    }
 }
 
 function deleteTask(index) {
@@ -74,10 +83,18 @@ function deleteTask(index) {
         taskElement.classList.add('remove');
         setTimeout(() => {
             taskElement.remove();
-            addTaskToHTML(); // Re-render the list
             saveLocalStorage();
+            // Update indices in DOM for remaining tasks
+            updateTaskIndices();
         }, 200);
     }
+}
+
+function updateTaskIndices() {
+    document.querySelectorAll('.list li').forEach((taskElement, index) => {
+        taskElement.querySelector('.complete-icon').dataset.index = index;
+        taskElement.querySelector('.close-icon').dataset.index = index;
+    });
 }
 
 list.addEventListener('click', (e) => {
