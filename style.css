@@ -46,6 +46,7 @@ body {
     resize: none;
     border-radius: 7px;
     background-color: #ccccdb;
+    background-image:linear-gradient(69deg, #cbcbfb, #fbfbfb);
     padding:3px;
 }
 
