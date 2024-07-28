@@ -125,3 +125,15 @@ body {
     opacity: 0;
     transform: translateX(-100%);
   }
+
+  li.dragging, li.complete.dragging {
+      opacity: 0;
+  }
+
+  .list li {
+      cursor: grab;
+  }
+
+  .list li:active {
+      cursor: grabbing;
+  }
