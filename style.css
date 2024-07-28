@@ -45,7 +45,7 @@ body {
     outline: none;
     resize: none;
     border-radius: 7px;
-    background-color: rgba(102, 107, 176, 0.4);
+    background-color: rgba(102, 107, 176, 0.1);
     padding:3px;
 }
 
