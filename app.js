@@ -53,14 +53,9 @@ function addTaskToHTML(task = null, index = null) {
             </svg>
         </div>
         `
-        ;/*
-        newTask.addEventListener('dragstart', (e) => {
-            e.target.classList.add('dragging');
-        });
-        newTask.addEventListener('dragend', (e) => {
-            e.target.classList.remove('dragging');
-        });*/
-            
+        ;
+        newTask.addEventListener('dragstart', dragStart);
+        newTask.addEventListener('dragend', dragEnd);
         list.appendChild(newTask);
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -78,7 +73,6 @@ function addTaskToHTML(task = null, index = null) {
 function completeTask(index) {
     listTask[index].status = (listTask[index].status === 'doing' ? 'complete' : 'doing');
     saveLocalStorage();
-    // Update only the specific task element
     let taskElement = document.querySelectorAll('.list li')[index];
     if (taskElement) {
         taskElement.classList.toggle('complete', listTask[index].status === 'complete');
@@ -87,13 +81,12 @@ function completeTask(index) {
 
 function deleteTask(index) {
     let taskElement = document.querySelectorAll('.list li')[index];
-    listTask.splice(index, 1); // Correct way to remove an item by index
+    listTask.splice(index, 1);
     if(taskElement) {
         taskElement.classList.add('remove');
         setTimeout(() => {
             taskElement.remove();
             saveLocalStorage();
-            // Update indices in DOM for remaining tasks
             updateTaskIndices();
         }, 200);
     }
@@ -116,4 +109,50 @@ list.addEventListener('click', (e) => {
     }
 });
 
+function dragStart(e) {
+    e.dataTransfer.setData('text/plain', null);
+    e.currentTarget.classList.add('dragging');
+}
+
+function dragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+}
+
 addTaskToHTML();
+
+list.addEventListener('dragover', dragOver);
+list.addEventListener('drop', drop);
+
+function dragOver(e) {
+    e.preventDefault();
+}
+
+function drop(e) {
+    e.preventDefault();
+    const draggable = document.querySelector('.dragging');
+    const target = e.target.closest('li');
+    if (target && draggable !== target) {
+        const nextSibling = getNextSiblingAfterDrop(target, e.clientY);
+        list.insertBefore(draggable, nextSibling);
+        updateListTaskOrder();
+    }
+}
+
+function updateListTaskOrder() {
+    const items = list.querySelectorAll('li');
+    listTask = Array.from(items).map((item, index) => {
+        const content = item.querySelector('.content').textContent;
+        const status = item.classList.contains('complete') ? 'complete' : 'doing';
+        return { content, status };
+    });
+    saveLocalStorage();
+}
+
+function getNextSiblingAfterDrop(target, clientY) {
+    const siblings = [...list.querySelectorAll('li:not(.dragging)')];
+    const nextSibling = siblings.find(sibling => {
+        const rect = sibling.getBoundingClientRect();
+        return clientY <= rect.top + rect.height / 2;
+    });
+    return nextSibling ? nextSibling : null;
+}
