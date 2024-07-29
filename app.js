@@ -1,38 +1,69 @@
 let list = document.querySelector('ul.list');
 let btnAdd = document.getElementById('btnAdd');
-let listTask = [
-    {
-        content: 'content-task 1',
-        status: 'doing'
-    }, 
-    {
-        content: 'content-task 2',
-        status: 'complete'
-    }
-];
+let btnUndo = document.getElementById('btnUndo');
+let btnRedo = document.getElementById('btnRedo');
 
-if(localStorage.getItem('listTask') != null) {
-    listTask = JSON.parse(localStorage.getItem('listTask'));
+let listTask = localStorage.getItem('listTask') ? JSON.parse(localStorage.getItem('listTask')) : [];
+let undoStack = [];
+let redoStack = [];
+let completedTasksPercentage = 0;
+
+function updateCompletedTasksPercentage() {
+    const totalTasks = listTask.length;
+    const completedTasks = listTask.filter(task => task.status === 'complete').length;
+    completedTasksPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+   // document.getElementById('percent').innerText = `${completedTasksPercentage}%`;
+   const percentElement = document.getElementById('percent');
+    percentElement.classList.add('updating');
+
+    setTimeout(() => {
+        percentElement.setAttribute('data-percentage', completedTasksPercentage);
+        percentElement.classList.remove('updating');
+    }, 250);
 }
 
 function saveLocalStorage() {
     localStorage.setItem('listTask', JSON.stringify(listTask));
 }
 
+function saveStateForUndo() {
+    undoStack.push(JSON.stringify(listTask));
+    redoStack = []; // Clear redo stack after a new action
+}
+
 btnAdd.onclick = (e) => {
     e.preventDefault();
     let content = document.getElementById('task');
-    if(content.value.trim() != '') {
+    if (content.value.trim() !== '') {
+        saveStateForUndo();
         let newTask = {
             content: content.value,
             status: 'doing'
         };
         listTask.push(newTask);
         addTaskToHTML(newTask, listTask.length - 1);
+        content.value = '';
+        saveLocalStorage();
     }
-    document.getElementById('task').value = '';
-    saveLocalStorage();
-}
+};
+
+btnUndo.onclick = () => {
+    if (undoStack.length > 0) {
+        redoStack.push(JSON.stringify(listTask));
+        listTask = JSON.parse(undoStack.pop());
+        addTaskToHTML();
+        saveLocalStorage();
+    }
+};
+
+btnRedo.onclick = () => {
+    if (redoStack.length > 0) {
+        undoStack.push(JSON.stringify(listTask));
+        listTask = JSON.parse(redoStack.pop());
+        addTaskToHTML();
+        saveLocalStorage();
+    }
+};
 
 function addTaskToHTML(task = null, index = null) {
     if (task !== null && index !== null) {
@@ -52,8 +83,7 @@ function addTaskToHTML(task = null, index = null) {
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18 17.94 6M18 18 6.06 6"/>
             </svg>
         </div>
-        `
-        ;
+        `;
         newTask.addEventListener('dragstart', dragStart);
         newTask.addEventListener('dragend', dragEnd);
         list.appendChild(newTask);
@@ -65,24 +95,47 @@ function addTaskToHTML(task = null, index = null) {
     } else {
         list.innerHTML = '';
         listTask.forEach((task, index) => {
-            addTaskToHTML(task, index);
+            let newTask = document.createElement('li');
+            newTask.setAttribute('draggable', 'true');
+            newTask.classList.add(task.status);
+            newTask.innerHTML = `
+            <div class="complete-icon" data-index="${index}">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>  
+            </div>
+            <div class="content">${task.content}</div>
+            <div class="close-icon" data-index="${index}">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
+            </div>
+            `;
+            newTask.addEventListener('dragstart', dragStart);
+            newTask.addEventListener('dragend', dragEnd);
+            list.appendChild(newTask);
         });
     }
+    updateTaskIndices();
+    updateCompletedTasksPercentage();
 }
 
 function completeTask(index) {
+    saveStateForUndo();
     listTask[index].status = (listTask[index].status === 'doing' ? 'complete' : 'doing');
     saveLocalStorage();
     let taskElement = document.querySelectorAll('.list li')[index];
     if (taskElement) {
         taskElement.classList.toggle('complete', listTask[index].status === 'complete');
     }
+    updateCompletedTasksPercentage();
 }
 
 function deleteTask(index) {
+    saveStateForUndo();
     let taskElement = document.querySelectorAll('.list li')[index];
     listTask.splice(index, 1);
-    if(taskElement) {
+    if (taskElement) {
         taskElement.classList.add('remove');
         setTimeout(() => {
             taskElement.remove();
@@ -90,6 +143,7 @@ function deleteTask(index) {
             updateTaskIndices();
         }, 200);
     }
+    updateCompletedTasksPercentage();
 }
 
 function updateTaskIndices() {
@@ -116,9 +170,12 @@ function dragStart(e) {
 
 function dragEnd(e) {
     e.currentTarget.classList.remove('dragging');
+    updateTaskIndices();
+    saveLocalStorage();
 }
 
 addTaskToHTML();
+updateCompletedTasksPercentage();
 
 list.addEventListener('dragover', dragOver);
 list.addEventListener('drop', drop);
@@ -140,11 +197,12 @@ function drop(e) {
 
 function updateListTaskOrder() {
     const items = list.querySelectorAll('li');
-    listTask = Array.from(items).map((item, index) => {
+    const newListTask = Array.from(items).map((item, index) => {
         const content = item.querySelector('.content').textContent;
         const status = item.classList.contains('complete') ? 'complete' : 'doing';
         return { content, status };
     });
+    listTask = newListTask;
     saveLocalStorage();
 }
 
