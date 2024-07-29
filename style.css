@@ -141,7 +141,3 @@ body {
   .close-icon svg:hover {
     color: rgba(237, 25, 68, 0.6);
   }
-
-  .complete-icon svg:hover {
-    color: #30fb73bc
-  }
