@@ -166,6 +166,7 @@ body {
     padding: 0 10px;
     background-color: #fff9ff;
     cursor: pointer;
+    transition: box-shadow 0.5s ease;
   }
 
   #bottom div span {
@@ -175,9 +176,13 @@ body {
   #percent::after {
     content: attr(data-percentage) "%";
     opacity: 1;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.4s ease;
   }
 
   #percent.updating::after {
     opacity: 0;
   }
+
+  #bottom button:hover {
+    box-shadow: 0px 2px 25px rgba(24, 21, 21, 0.629);
+}
