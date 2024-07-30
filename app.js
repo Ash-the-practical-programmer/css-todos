@@ -8,6 +8,15 @@ let undoStack = [];
 let redoStack = [];
 let completedTasksPercentage = 0;
 
+function updateBottomVisibility() {
+    const bottom = document.getElementById('bottom');
+    if (listTask.length > 0) {
+        bottom.style.display = 'block';
+    } else {
+        bottom.style.display = 'none';
+    }
+}
+
 function updateCompletedTasksPercentage() {
     const totalTasks = listTask.length;
     if(totalTasks) document.getElementById('bottom').style.display = "block";
@@ -119,6 +128,7 @@ function addTaskToHTML(task = null, index = null) {
     }
     updateTaskIndices();
     updateCompletedTasksPercentage();
+    updateBottomVisibility();
 }
 
 function completeTask(index) {
