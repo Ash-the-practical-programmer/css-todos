@@ -11,7 +11,7 @@ let completedTasksPercentage = 0;
 function updateBottomVisibility() {
     const bottom = document.getElementById('bottom');
     if (listTask.length > 0) {
-        bottom.style.display = 'block';
+        bottom.style.display = 'flex';
     } else {
         bottom.style.display = 'none';
     }
