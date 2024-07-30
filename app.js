@@ -12,6 +12,7 @@ function updateBottomVisibility() {
     const bottom = document.getElementById('bottom');
     if (listTask.length > 0) {
         bottom.style.display = 'flex';
+        bottom.style.flexDirection = 'row';
     } else {
         bottom.style.display = 'none';
     }
@@ -225,7 +226,3 @@ function getNextSiblingAfterDrop(target, clientY) {
     });
     return nextSibling ? nextSibling : null;
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    if(!listTask.length) document.getElementById('bottom').style.display = "none";
-});
