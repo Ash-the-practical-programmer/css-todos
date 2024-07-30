@@ -8,8 +8,19 @@ let undoStack = [];
 let redoStack = [];
 let completedTasksPercentage = 0;
 
+function updateBottomVisibility() {
+    const bottom = document.getElementById('bottom');
+    if (listTask.length > 0) {
+        bottom.style.display = 'flex';
+        bottom.style.flexDirection = 'row';
+    } else {
+        bottom.style.display = 'none';
+    }
+}
+
 function updateCompletedTasksPercentage() {
     const totalTasks = listTask.length;
+    if(totalTasks) document.getElementById('bottom').style.display = "block";
     const completedTasks = listTask.filter(task => task.status === 'complete').length;
     completedTasksPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
    // document.getElementById('percent').innerText = `${completedTasksPercentage}%`;
@@ -118,6 +129,7 @@ function addTaskToHTML(task = null, index = null) {
     }
     updateTaskIndices();
     updateCompletedTasksPercentage();
+    updateBottomVisibility();
 }
 
 function completeTask(index) {

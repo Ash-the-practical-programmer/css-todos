@@ -149,6 +149,8 @@ body {
     padding: 6px 10px;
     border-radius: 14px;
     width: 369px;
+    flex-direction: row;
+    transition: display 0.5s ease;
   }
 
   #bottom div {
