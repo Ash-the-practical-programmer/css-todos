@@ -10,6 +10,7 @@ let completedTasksPercentage = 0;
 
 function updateCompletedTasksPercentage() {
     const totalTasks = listTask.length;
+    if(totalTasks === 0) document.getElementById('bottom').style.display = "none";
     const completedTasks = listTask.filter(task => task.status === 'complete').length;
     completedTasksPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
    // document.getElementById('percent').innerText = `${completedTasksPercentage}%`;
